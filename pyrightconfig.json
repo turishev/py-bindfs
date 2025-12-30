@@ -1,0 +1,27 @@
+{
+    "include": [
+	"src"
+  ],
+
+  "exclude": [
+  ],
+
+  "ignore": [
+  ],
+
+  "defineConstant": {
+    "DEBUG": true
+  },
+
+  "stubPath": "src/stubs",
+
+  "reportMissingImports": false,
+  "reportMissingTypeStubs": false,
+
+  "executionEnvironments": [
+    {
+	"root": "src",
+	"reportMissingImports": false,
+    }
+  ]
+}
