@@ -6,6 +6,7 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk #, Adw
 
+from binding_list import BindingList
 
 def make_button(label, action):
     bt = Gtk.Button(label=label)
@@ -42,7 +43,7 @@ class StatusPanel():
 
 
 class MainWindow(Gtk.ApplicationWindow):
-    app_title = "dircmp"
+    app_title = "pybindfs"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -71,14 +72,14 @@ class MainWindow(Gtk.ApplicationWindow):
         self.bottom_box.set_homogeneous(True)
         self.main_box.append(self.bottom_box)
 
-        # self.result_list = ResultList()
+        self.binding_list = BindingList()
         sw = Gtk.ScrolledWindow()
         self.center_box.append(sw)
-        # sw.set_child(self.result_list.list_view)
-        # self.result_list.list_view.grab_focus()
+        sw.set_child(self.binding_list.list_view)
+        self.binding_list.list_view.grab_focus()
 
-        # self.help_bt = make_button("Help", "help")
-        # self.bottom_box.append(self.help_bt)
+        self.help_bt = make_button("Help", "help")
+        self.bottom_box.append(self.help_bt)
 
         self.close_bt = make_button("Close", "quit")
         self.bottom_box.append(self.close_bt)
