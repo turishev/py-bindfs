@@ -14,11 +14,11 @@ class DataObject(GObject.GObject):
     target_path = GObject.Property(type=str, default="")
     switched_on = GObject.Property(type=bool, default=False)
 
-    def __init__(self, origin_path, target_path):
+    def __init__(self, origin_path, target_path, status):
         super().__init__()
         self.origin_path = origin_path
         self.target_path = target_path
-        self.switched_on=False
+        self.switched_on = status
 
 
 def _create_list_column(name, data_field, setup_fn, bind_fn, unbind_fn):
@@ -90,14 +90,14 @@ class BindingList():
     def bind_button_field(self, factory, item : Gtk.ColumnViewCell):
         bt = item.get_child()
         obj : DataObject = item.get_item()
-        # bt.set_label(str(obj.switched_on))
         bt.set_action_name("app.bind_fs")
         obj : DataObject = item.get_item()
         target_value = GLib.Variant("as", [obj.origin_path, obj.target_path])
         bt.set_action_target_value(target_value)
-        
-        bt._binding = obj.bind_property("switched_on", bt, "label",
-                                       GObject.BindingFlags.SYNC_CREATE)
+        bt._binding = obj.bind_property("switched_on",
+                                        bt, "label",
+                                        GObject.BindingFlags.SYNC_CREATE,
+                                        lambda __,v: "MOUNT" if not v else "UNMOUNT")
 
 
     def unbind_fields(self, factory, item : Gtk.ColumnViewCell):
@@ -106,8 +106,8 @@ class BindingList():
             child._binding.unbind()
 
 
-    def append(self, origin_path, target_path):
-        obj = DataObject(origin_path=origin_path, target_path=target_path)
+    def append(self, origin_path, target_path, status = False):
+        obj = DataObject(origin_path=origin_path, target_path=target_path, status=status)
         self.store.append(obj)
 
 

@@ -78,6 +78,9 @@ class MainWindow(Gtk.ApplicationWindow):
         sw.set_child(self.binding_list.list_view)
         self.binding_list.list_view.grab_focus()
 
+        self.update_bt = make_button("Update", "update")
+        self.bottom_box.append(self.update_bt)
+
         self.help_bt = make_button("Help", "help")
         self.bottom_box.append(self.help_bt)
 
