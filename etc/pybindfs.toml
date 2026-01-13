@@ -1,0 +1,7 @@
+default_sys_media_dir = "/run/media"
+default_bind_dir = "/home/myfamftp/my/media"
+
+bindings = [
+	  {orig = "/data", target = "/home/myfamftp/my/data"},
+	  {orig = "/prog/tmp", target = "/home/myfamftp/my/prog-tmp"},
+]

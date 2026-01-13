@@ -72,38 +72,47 @@ class BindingList():
         label.set_xalign(0.0)
         item.set_child(label)
 
+
     def bind_origin(self, factory, item):
         label = item.get_child()
         obj = item.get_item()
         label.set_text(obj.origin_path)
+
 
     def bind_target(self, factory, item):
         label = item.get_child()
         obj = item.get_item()
         label.set_text(obj.target_path)
 
+
     def setup_button_field(self, factory, item : Gtk.ColumnViewCell):
         bt = Gtk.Button()
         # bt.add_css_class("result-list-active-button")
         item.set_child(bt)
 
+
     def bind_button_field(self, factory, item : Gtk.ColumnViewCell):
         bt = item.get_child()
-        obj : DataObject = item.get_item()
         bt.set_action_name("app.bind_fs")
         obj : DataObject = item.get_item()
         target_value = GLib.Variant("as", [obj.origin_path, obj.target_path])
         bt.set_action_target_value(target_value)
-        bt._binding = obj.bind_property("switched_on",
-                                        bt, "label",
-                                        GObject.BindingFlags.SYNC_CREATE,
-                                        lambda __,v: "MOUNT" if not v else "UNMOUNT")
+        bd1 = obj.bind_property("switched_on",
+                                bt, "label",
+                                GObject.BindingFlags.SYNC_CREATE,
+                                lambda __,v: "MOUNT" if not v else "UNMOUNT")
+        bd2 = obj.bind_property("switched_on",
+                                bt, "css-classes",
+                                GObject.BindingFlags.SYNC_CREATE,
+                                lambda __,v: ["blue-button"] if not v else ["red-button"])
+        bt._binding = [bd1, bd2]
 
 
     def unbind_fields(self, factory, item : Gtk.ColumnViewCell):
         child = item.get_child()
         if hasattr(child, "_binding"):
-            child._binding.unbind()
+            for bd in child._binding:
+                bd.unbind()
 
 
     def append(self, origin_path, target_path, status = False):

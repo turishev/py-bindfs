@@ -20,7 +20,7 @@ class MyApp(Adw.Application):
         win = MainWindow(application=app)
         self.actions = AppActions(win)
         self.actions.register_actions(self)
-        self.actions.fill_bind_list()
+        self.actions.fill_bindings_list()
         win.after_init() # after init_actions
         win.present()
 

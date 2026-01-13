@@ -1,21 +1,14 @@
 from gi.repository import Gtk, Gdk
 
-# css = """
-# .result-list-active-button:checked {
-#     background-color: red;
-#     border-color: darkred;
-# }
-# """
-
 
 css = """
-.active-button:checked {
-    background-color: blue;
-    color: red:
+.red-button {
+    # background-color: blue;
+    color: red;
 }
-
-.monospace-label {
-	font-family: monospace;
+.blue-button {
+    # background-color: blue;
+    color: blue;
 }
 """
 

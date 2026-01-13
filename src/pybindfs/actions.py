@@ -1,18 +1,22 @@
 import os
 from pathlib import Path, PurePath
 import subprocess
-import re
+# import re
+import tomllib
+
+from dataclasses import dataclass
 
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gio, GLib
-# from subprocess import Popen, DEVNULL, STDOUT
+
+
 import dialogs
 from shortcuts import shortcuts;
 import version
 
-from dataclasses import dataclass
+
 
 class AppError(Exception): pass
 
@@ -24,62 +28,77 @@ class MountItem:
     options : list[str]
 
 class AppActions:
-    default_origin_dir = Path('/', 'run', 'media')
-    default_target_dir = Path('/','home','myfamftp','my','media')
-
     def __init__(self, win):
+        self.home = os.getenv('HOME', '')
         self.win = win
         self.actions = [
-            ('quit', self.quit_handler),
-            ('help', self.help_handler),
-            ('update', self.read_mount_table),
+            ('quit', None, self.quit_handler),
+            ('help', None, self.help_handler),
+            ('update', None, self.read_mount_table),
+            ('bind_fs', 'as', self.bind_fs_handler)
             ]
 
+        config_path = Path(self.home, ".config", "pybindfs.toml")
+        config = self.load_config(str(config_path)) if config_path.exists() else {}
+
+        print(f"config:{config}")
+
+        self.sys_media_dir = Path(config.get('default_sys_media_dir', '/run/media'))
+        self.default_target_dir = Path(config.get('default_bind_dir','/home/myfamftp/my/media'))
+        self.custom_bindings = config.get('bindings', [])
+
+        self.user = os.getenv('USER')
+        if self.user is None: raise AppError
+        self.media_path = Path(self.sys_media_dir, self.user)
+
+
     def register_actions(self, app):
-        def _create_act(name, keys, fn):
+        def _create_act(name : str, param_type : None | str, keys : list[str], fn):
             # we need pass name, keys, fn as values into a separate function
             # to decouple them from mutable iterators
-            act = Gio.SimpleAction(name=name)
-            act.connect('activate', lambda *_: fn())
+            ptype = None if param_type is None else GLib.VariantType.new(param_type)
+            act = Gio.SimpleAction(name=name, parameter_type=ptype)
+            act.connect('activate', fn)
             app.add_action(act)
             app.set_accels_for_action("app.%s" % name, keys)
 
-        for act, handler in self.actions:
+        for act, param_type, handler in self.actions:
             key = shortcuts[act][0] if act in shortcuts else ""
-            _create_act(act, [key], handler)
+            _create_act(act, param_type, [key], handler)
 
 
-        act = Gio.SimpleAction.new("bind_fs", GLib.VariantType.new("as"))
-        act.connect("activate", self.bind_fs_handler)
-        app.add_action(act)
+    def fill_bindings_list(self):
+        def append_to_list(origin_path, target_path):
+            print(f"add binding:{origin_path} -> {target_path}")
+            mount_item = self.find_in_mount_table(str(target_path))
+            print(f"mount_item:{mount_item}")
+            mount_type = mount_item.type if mount_item else ""
+            mount_origin = mount_item.device if mount_item else ""
+            is_binded = mount_type == "fuse.bindfs" and mount_origin == str(origin_path)
+            self.win.binding_list.append(origin_path, target_path, is_binded)
 
-
-    def fill_bind_list(self):
         self.read_mount_table()
-        self.user = os.getenv('USER')
-        if self.user is None: raise AppError
-        self.media_path = Path(AppActions.default_origin_dir, self.user)
-
+            
         if self.media_path.exists():
             for child in self.media_path.iterdir():
                 if child.is_dir():
                     name = child.name
                     origin_path = Path(self.media_path, name)
-                    target_path = Path(AppActions.default_target_dir, name)
-                    print(f"path:{origin_path} -> {target_path}")
-                    mount_item = self.find_in_mount_table(str(target_path))
-                    print(f"mount_item:{mount_item}")
-                    mount_type = mount_item.type if mount_item else ""
-                    mount_origin = mount_item.device if mount_item else ""
-                    is_binded = mount_type == "fuse.bindfs" and mount_origin == str(origin_path)
-                    self.win.binding_list.append(origin_path, target_path, is_binded)
+                    target_path = Path(self.default_target_dir, name)
+                    append_to_list(origin_path, target_path)                    
+
+        for item in self.custom_bindings:
+            print(f"custom item:{item}")
+            origin_path = Path(item['orig'])
+            target_path = Path(item['target'])
+            append_to_list(origin_path, target_path)                    
 
 
-    def quit_handler(self):
+    def quit_handler(self, *__):
         self.win.destroy()
 
 
-    def help_handler(self):
+    def help_handler(self, *__):
         print("help_handler")
         head = f"pybindfs\nbuild:{version.build_time}\ngit:{version.hash}\n"
         shortcuts_help = "Common shortcuts\n" + "\n".join([
@@ -89,7 +108,7 @@ class AppActions:
         dialogs.show_info_dialog(self.win, text)
 
 
-    def bind_fs_handler(self, action, parameter):
+    def bind_fs_handler(self, __, parameter):
         origin_dir, target_dir = parameter.unpack()
         print(f"bind_fs_handler, origin_dir: {origin_dir} target_dir:{target_dir}")
         is_binded = self.win.binding_list.get_binded_flag(origin_dir, target_dir)
@@ -103,13 +122,6 @@ class AppActions:
             self.win.binding_list.set_binded_flag(origin_dir, target_dir, False)
 
         self.read_mount_table()
-
-
-    def check_binding(self, origin_dir : str, target_dir : str):
-        # mount
-        pass
-        # /run/media/prog/EVT_DATA on /home/myfamftp/my/media/EVT_DATA type fuse.bindfs (rw,nosuid,nodev,relatime,user_id=1000,group_id=1000,default_permissions,allow_other)
-
 
 
     def bind_origin_to_target(self, origin_dir : str, target_dir : str):
@@ -158,3 +170,7 @@ class AppActions:
         for item in self.mount_table:
             if item.mount_point == mount_point:
                 return item
+
+    def load_config(self, config_path : str):
+        with open(config_path, "rb") as f:
+            return tomllib.load(f)
