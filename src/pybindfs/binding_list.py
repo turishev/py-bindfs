@@ -87,7 +87,6 @@ class BindingList():
 
     def setup_button_field(self, factory, item : Gtk.ColumnViewCell):
         bt = Gtk.Button()
-        # bt.add_css_class("result-list-active-button")
         item.set_child(bt)
 
 
