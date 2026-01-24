@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=pybindfs
+Exec=python3 .local/share/pybindfs/pybindfs.py
+Terminal=false
+Icon=pybindfs
+
+Type=Application
+Comment="Python UI to bindfs and fusermount tools"

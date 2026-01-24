@@ -20,6 +20,7 @@ install: clean
 	mkdir -p $(install_dir)
 	cp etc/$(name).desktop $(install_dir)
 	cp etc/$(name).png $(install_dir)
+	cp etc/$(name).toml $(install_dir)
 	cp etc/install.sh  $(install_dir)
 	cp -R src/$(name)  $(install_dir)
 	echo "build_time='$(build-time)'" >$(install_dir)/$(name)/version.py
