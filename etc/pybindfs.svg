@@ -26,8 +26,8 @@
      inkscape:document-units="mm"
      showgrid="true"
      inkscape:zoom="2.8507296"
-     inkscape:cx="86.118306"
-     inkscape:cy="109.09488"
+     inkscape:cx="106.46397"
+     inkscape:cy="110.49803"
      inkscape:window-width="1920"
      inkscape:window-height="1011"
      inkscape:window-x="0"
@@ -77,63 +77,63 @@
     <rect
        style="fill:#f4eed7;fill-opacity:1;stroke:#338000;stroke-width:0"
        id="rect7"
-       width="67.73333"
-       height="67.73333"
-       x="0"
-       y="0"
-       rx="5" />
+       width="63.500004"
+       height="58.208332"
+       x="2.1166625"
+       y="4.7624993"
+       rx="4.687501" />
     <rect
-       style="fill:#a0892c;stroke:#805700;stroke-width:1.4864;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#a0892c;stroke:#805700;stroke-width:1.26474;stroke-dasharray:none;stroke-opacity:1"
        id="rect1"
-       width="38.951599"
-       height="26.471931"
-       x="2.8598661"
-       y="4.7556992"
+       width="33.108479"
+       height="22.54776"
+       x="5.4174843"
+       y="8.0407028"
        sodipodi:type="rect"
-       rx="4.9072261"
+       rx="4.1710939"
        inkscape:label="folder-body" />
     <path
        id="rect3"
        style="fill:#d3bc5f;fill-opacity:1;stroke:#805700;stroke-width:0.976312;stroke-dasharray:none;stroke-opacity:1"
        inkscape:label="folder-corner-base"
-       d="m 7.6259966,4.9384365 c -2.6403245,0 -4.7661305,2.2302116 -4.7661305,5.0002108 V 12.875935 H 13.226052 c 2.640325,0 4.766131,-2.230211 4.766131,-5.0002101 V 4.9384365 Z" />
+       d="m 10.271313,8.0563547 c -2.640325,0 -4.766131,2.2302113 -4.766131,5.0002103 v 2.937288 h 10.366186 c 2.640325,0 4.766131,-2.230211 4.766131,-5.00021 V 8.0563547 Z" />
     <rect
-       style="fill:#a0892c;stroke:#805700;stroke-width:1.4864;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#a0892c;stroke:#805700;stroke-width:1.29528;stroke-dasharray:none;stroke-opacity:1"
        id="use1"
-       width="38.951435"
-       height="26.471935"
-       x="2.8598647"
-       y="36.505695"
+       width="33.770222"
+       height="23.186556"
+       x="4.740468"
+       y="37.160141"
        sodipodi:type="rect"
-       rx="4.9072056"
+       rx="4.2544627"
        inkscape:label="hdd-body" />
     <ellipse
-       style="fill:#d3bc5f;fill-opacity:1;stroke:#805700;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#d3bc5f;fill-opacity:1;stroke:#805700;stroke-width:0.858088;stroke-dasharray:none;stroke-opacity:1"
        id="path3"
-       cy="49.741665"
-       cx="16.404499"
-       rx="10.583"
-       ry="10.583335"
+       cy="48.668751"
+       cx="16.918583"
+       rx="9.0812063"
+       ry="9.0813751"
        inkscape:label="hdd-circle" />
     <rect
-       style="fill:#d3bc5f;fill-opacity:1;stroke:#805700;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#d3bc5f;fill-opacity:1;stroke:#805700;stroke-width:0.912871;stroke-dasharray:none;stroke-opacity:1"
        id="rect4"
        width="5.2921686"
-       height="15.874997"
-       x="36.512329"
-       y="41.804165"
+       height="13.229165"
+       x="33.218521"
+       y="42.138836"
        inkscape:label="hdd-connector" />
     <rect
        style="fill:#decd87;fill-opacity:1;stroke:#338000;stroke-width:0"
        id="rect5"
-       width="18.520834"
-       height="58.208332"
+       width="13.229167"
+       height="52.916664"
        x="47.095833"
-       y="4.7624993"
+       y="7.4083323"
        inkscape:label="export-area" />
     <g
        id="g6"
-       transform="matrix(1,0,0,1.3333334,0,-5.9972227)"
+       transform="matrix(1,0,0,1.2,-2.7490339,-2.2754162)"
        style="fill:#805700;fill-opacity:1">
       <rect
          style="fill:#805700;fill-opacity:1;stroke:#338000;stroke-width:0"
@@ -145,7 +145,7 @@
          inkscape:label="arrow-body" />
       <path
          id="path6"
-         style="fill:#805700;stroke:#338000;stroke-width:0;fill-opacity:1"
+         style="fill:#805700;fill-opacity:1;stroke:#338000;stroke-width:0"
          inkscape:transform-center-x="-0.88194427"
          d="m 57.679165,17.991666 -5.291666,7.937499 V 10.054166 Z" />
     </g>
@@ -153,7 +153,7 @@
        x="0"
        y="0"
        xlink:href="#g6"
-       id="use6"
-       transform="translate(0,31.750014)" />
+       id="use2"
+       transform="translate(0,29.104179)" />
   </g>
 </svg>
