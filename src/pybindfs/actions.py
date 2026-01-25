@@ -78,20 +78,20 @@ class AppActions:
             self.win.binding_list.append(origin_path, target_path, is_binded)
 
         self.read_mount_table()
-            
+
         if self.media_path.exists():
             for child in self.media_path.iterdir():
                 if child.is_dir():
                     name = child.name
                     origin_path = Path(self.media_path, name)
                     target_path = Path(self.default_target_dir, name)
-                    append_to_list(origin_path, target_path)                    
+                    append_to_list(origin_path, target_path)
 
         for item in self.custom_bindings:
             print(f"custom item:{item}")
             origin_path = Path(item['orig'])
             target_path = Path(item['target'])
-            append_to_list(origin_path, target_path)                    
+            append_to_list(origin_path, target_path)
 
 
     def quit_handler(self, *__):
@@ -105,52 +105,68 @@ class AppActions:
             f"{v[0]}\t{v[1]}" for v in shortcuts.values()
         ])
         text = "\n\n".join([head, shortcuts_help])
-        dialogs.show_info_dialog(self.win, text)
+        dialogs.show_alert_dialog(self.win, text)
 
 
     def bind_fs_handler(self, __, parameter):
-        origin_dir, target_dir = parameter.unpack()
-        print(f"bind_fs_handler, origin_dir: {origin_dir} target_dir:{target_dir}")
-        is_binded = self.win.binding_list.get_binded_flag(origin_dir, target_dir)
-        if not is_binded:
-            result = self.bind_origin_to_target(origin_dir, target_dir)
-            if not result: print("Binding error")
-            self.win.binding_list.set_binded_flag(origin_dir, target_dir, True)
-        else:
-            result = self.unbind_target(target_dir)
-            if not result: print("Unbinding error")
-            self.win.binding_list.set_binded_flag(origin_dir, target_dir, False)
+        try:
+            origin_dir, target_dir = parameter.unpack()
+            print(f"bind_fs_handler, origin_dir: {origin_dir} target_dir:{target_dir}")
+            is_binded = self.win.binding_list.get_binded_flag(origin_dir, target_dir)
 
-        self.read_mount_table()
+            if not is_binded:
+                self.bind_origin_to_target(origin_dir, target_dir)
+                self.win.binding_list.set_binded_flag(origin_dir, target_dir, True)
+            else:
+                self.unbind_target(target_dir)
+                self.win.binding_list.set_binded_flag(origin_dir, target_dir, False)
+
+            self.read_mount_table()
+        except Exception as e:
+            info = "Binding/Unbinding error:\n" + str(e) 
+            print(info)
+            dialogs.show_alert_dialog(self.win, info)
 
 
     def bind_origin_to_target(self, origin_dir : str, target_dir : str):
         target_path = Path(target_dir)
         if target_path.exists():
-            if any(target_path.iterdir()): raise AppError()
+            if any(target_path.iterdir()): raise AppError(f"target '{target_dir}' is not empty!")
         else:
             target_path.mkdir(parents=True, exist_ok=True)
 
-        completed = subprocess.run(["bindfs", origin_dir, target_dir])
+        result = subprocess.run(["bindfs", origin_dir, target_dir],
+                                   capture_output=True,
+                                   text=True)
+        # completed.check_returncode()
+        if result.returncode != 0:
+            print("stderr:" + str(result.stderr))
+            raise AppError(str(result.stderr))
 
-        if completed.returncode != 0:  return False
-        else: return True
+        return True
 
 
     def unbind_target(self, target_dir):
-        completed = subprocess.run(["fusermount", "-u", target_dir])
-        if completed.returncode != 0:  return False
-        else: return True
+        result = subprocess.run(["fusermount", "-u", target_dir],
+                                   capture_output=True,
+                                   text=True)
+
+        if result.returncode != 0:
+            print("stderr:" + str(result.stderr))
+            raise AppError(str(result.stderr))
+        return True
 
 
-    def read_mount_table(self):
+    def read_mount_table(self,*_):
         result = subprocess.run(
             ["mount"],
             capture_output=True,    # Захватить stdout и stderr
             text=True,              # Декодировать вывод в строку (UTF-8)
-            check=True              # Выбросить исключение при ошибке (код != 0)
         )
         # print(result.stdout)        # Основной вывод процесса
+        if result.returncode != 0:
+            print("stderr:" + str(result.stderr))
+            raise AppError(str(result.stderr))
 
         lines = result.stdout.split("\n")
         table = [l.split() for l in lines]

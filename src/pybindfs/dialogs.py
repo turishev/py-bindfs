@@ -16,7 +16,7 @@ def show_confirm_dialog(parent, message, on_ok):
     alert.choose(parent, None, do_act)
 
 
-def show_info_dialog(parent, message):
+def show_alert_dialog(parent, message):
     alert = Gtk.AlertDialog()
     alert.set_message(message)
     alert.set_modal(True)
