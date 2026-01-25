@@ -104,7 +104,8 @@ class AppActions:
         shortcuts_help = "Common shortcuts\n" + "\n".join([
             f"{v[0]}\t{v[1]}" for v in shortcuts.values()
         ])
-        text = "\n\n".join([head, shortcuts_help])
+        config_help = "Configuration must be placed in a file $HOME/.config/pybindfs.toml"
+        text = "\n\n".join([head, shortcuts_help, config_help])
         dialogs.show_alert_dialog(self.win, text)
 
 
