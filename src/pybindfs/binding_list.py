@@ -50,14 +50,15 @@ class BindingList():
         self.target_path.set_expand(True)
         self.list_view.append_column(self.target_path)
 
-        self.list_view.append_column(
-            _create_list_column(
-                "",
-                "switched_on",
-                self.setup_button_field,
-                self.bind_button_field,
-                self.unbind_fields)
-        )
+        bt_column = _create_list_column(
+            "",
+            "switched_on",
+            self.setup_button_field,
+            self.bind_button_field,
+            self.unbind_fields)
+
+        bt_column.set_fixed_width(140)
+        self.list_view.append_column(bt_column)
 
         sorter = Gtk.ColumnView.get_sorter(self.list_view)
         self.sort_model = Gtk.SortListModel(model=self.store, sorter=sorter)
